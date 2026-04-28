@@ -1,8 +1,15 @@
 # %%
+# Projeto Data Lake - Leitura de Arquivo Parquet do AWS S3 usando Python
+# %%
 import boto3
 import pandas as pd
 import io
 import pyarrow.parquet as pq
+from sqlalchemy import create_engine
+
+
+# %%
+database_URL = 'postgresql://postgres.ctggdythmubrpqynmtjn:iKH4VO9S2igRJxJo@aws-1-us-east-1.pooler.supabase.com:5432/postgres'
 # %%
 # Configurações dos parametros AWS S3
 S3_ENDPOINT_URL = "https://ctggdythmubrpqynmtjn.storage.supabase.co/storage/v1/s3"
@@ -10,6 +17,8 @@ AWS_REGION = "us-east-1"
 AWS_ACCESS_KEY_ID = "091e4b53f0115bd1cddd68d626fe839b"
 AWS_SECRET_KEY_ID = "4e366e2c070e200bf714844800e5675e94ba2eb75279fb2105d1d7a363bba085"
 BUCKET_NAME = "meu_bucket"
+PASSWORD_URL = "https://ctggdythmubrpqynmtjn.storage.supabase.co/storage/v1/s3"
+
 #%%
 # Inicializa o cliente S3
 s3_client = boto3.client('s3',
@@ -17,48 +26,58 @@ s3_client = boto3.client('s3',
                           region_name=AWS_REGION,
                           aws_access_key_id=AWS_ACCESS_KEY_ID, 
                           aws_secret_access_key=AWS_SECRET_KEY_ID)
-# %%
+# %% Listar os buckets disponíveis
 response = s3_client.list_buckets()['Buckets']
 for bucket in response:
     print(bucket['Name'])
-# %%
+# %% Listar os objetos no bucket especificado
 response = s3_client.list_objects(Bucket=BUCKET_NAME)# 
  
-# %%
-# Listar os arquivos no bucket
+# %% Listar os arquivos no bucket especificado
 arquivos = [obj["Key"] for obj in response["Contents"]]
 for arquivos_parquet in arquivos:
   print(arquivos_parquet)
-# %%
-# Baixar arquivo Parquet do S3 e ler com Pandas 
+# %% Pegar arquivo Parquet do S3 e ler com Pandas
 FILE_KEY = "produtos.parquet"
 response = s3_client.get_object(Bucket=BUCKET_NAME, Key=FILE_KEY)
 parquet_bytes = response["Body"].read()
-df = pd.read_parquet(io.BytesIO(parquet_bytes))
+dfProdutos = pd.read_parquet(io.BytesIO(parquet_bytes))
+type(parquet_bytes)
 # %%
 
-# %%
-# Visualizar as primeiras linhas do DataFrame
-df.head(5)
-#%%Visualizar as últimas linhas do DataFrame
-df.tail(5)
-#%%
-# Visualizar o número de linhas e colunas do DataFrame
-df.shape
+# %% Visualizar as primeiras linhas do DataFrame
+dfProdutos.head(5)
+#%% Visualizar as últimas linhas do DataFrame
+dfProdutos.tail(5)
+#%% Visualizar o número de linhas e colunas do DataFrame
+dfProdutos.shape
 #%%
 #Visualizar o tipo de dados de cada coluna
-df.dtypes
+dfProdutos.dtypes
 #%%
 #Visualizar as estatísticas descritivas do DataFrame
-df.describe()
+dfProdutos.describe()
 #%%
 #Visualizar o número de valores únicos em cada coluna
-df.nunique()
+dfProdutos.nunique()
 
 # %%
 
 #Visualizar as colunas do DataFrame
-df.columns
+dfProdutos.columns
 # %%
+dfProdutos.head()
+# %%
+dfProdutos.info()
 
+# %% Cria a conexão com o banco de dados PostgreSQL usando SQLAlchemy
+engine = create_engine(database_URL)
+# %% Salva o DataFrame no banco de dados PostgreSQL usando o método to_sql do Pandas
+dfProdutos.to_sql('produtos', 
+                  con=engine, 
+                  if_exists='replace',
+                  index=False) 
+# %%
+# %%
+# %%
 # %%
