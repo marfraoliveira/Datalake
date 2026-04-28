@@ -14,8 +14,8 @@ database_URL = 'postgresql://postgres.ctggdythmubrpqynmtjn:iKH4VO9S2igRJxJo@aws-
 # Configurações dos parametros AWS S3
 S3_ENDPOINT_URL = "https://ctggdythmubrpqynmtjn.storage.supabase.co/storage/v1/s3"
 AWS_REGION = "us-east-1"
-AWS_ACCESS_KEY_ID = "091e4b53f0115bd1cddd68d626fe839b"
-AWS_SECRET_KEY_ID = "4e366e2c070e200bf714844800e5675e94ba2eb75279fb2105d1d7a363bba085"
+AWS_ACCESS_KEY_ID = ""
+AWS_SECRET_KEY_ID = ""
 BUCKET_NAME = "meu_bucket"
 PASSWORD_URL = "https://ctggdythmubrpqynmtjn.storage.supabase.co/storage/v1/s3"
 
