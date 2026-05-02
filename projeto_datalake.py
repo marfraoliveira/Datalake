@@ -16,7 +16,7 @@ S3_ENDPOINT_URL = "https://ctggdythmubrpqynmtjn.storage.supabase.co/storage/v1/s
 AWS_REGION = "us-east-1"
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_KEY_ID = ""
-BUCKET_NAME = "meu_bucket"
+BUCKET_NAME = "meu_bucket_datalake"
 PASSWORD_URL = "https://ctggdythmubrpqynmtjn.storage.supabase.co/storage/v1/s3"
 
 #%%
@@ -77,7 +77,16 @@ dfProdutos.to_sql('produtos',
                   con=engine, 
                   if_exists='replace',
                   index=False) 
+# %% # Criar um bucket no S3
+
+def create_bucket(bucket_name):
+    try:
+        s3_client.create_bucket(Bucket=bucket_name)
+        print(f"Bucket '{bucket_name}' criado com sucesso.")
+    except Exception as e:
+        print(f"Falha ao criar o bucket: {e}")
+
 # %%
-# %%
+create_bucket(BUCKET_NAME)
 # %%
 # %%
